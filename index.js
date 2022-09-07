@@ -1,37 +1,5 @@
 
-/*
-const add_todo = {
- type: 'ADD_TODO',
- todo: {
-  id: 0,
-  name: 'Learn Redux',
-  complete: false,
- }
-}
-
-const remove_todo = {
- type: 'REMOVE_TODO',
- id: 0,
-}
-
-const add_goal = {
- type: 'ADD_GOAL',
- goal: {
-  id: 0,
-  name: 'Run a marathon',
- }
-}
-
-const remove_goal = {
- id: 0
-}
-*/
-
-/*
-* Todo reducer
-* The default state is [] if one does not exist.
-* Instead of pushing the state we concat it because push would mutate the state.
-* */
+// reducer function
 function todos(state = [], action) {
  if (action.type === 'ADD_TODO'){
   return state.concat([action.todo])
@@ -39,7 +7,7 @@ function todos(state = [], action) {
  return state
 }
 
-function createStore () {
+function createStore (reducer) {
  // The store should have four parts
  // 1. The state
  // 2. Get the state
@@ -51,20 +19,45 @@ function createStore () {
 
  const getState = () => state
 
- const subscribe = (listeners) => {
-  listeners.push(listeners)
-
+ const subscribe = (listener) => {
+  listeners.push(listener)
   return () => {
-   listeners = listeners.filter((l) => l !== listeners)
+   listeners = listeners.filter((l) => l !== listener)
   }
+ }
+
+ const dispatch = (action) => {
+  // call todos which wil get us our new state
+  state = reducer(state, action)
+
+  // loop over our listeners and invoke each one of them
+  listeners.forEach((listener) => listener())
  }
 
  return {
   getState,
-  subscribe
+  subscribe,
+  dispatch,
  }
 }
 
+// creating store
+const store = createStore(todos)
+
+// unsubscribe
+const unsubscribe = store.subscribe(()=>{
+ console.log('The new state is: ', store.getState())
+})
+
+// how it will look from the user perspective
+store.dispatch({
+ type: 'ADD_TODO',
+ todo: {
+  id: 0,
+  name: 'Learn Redux',
+  complete: false,
+ }
+})
 
 
 
