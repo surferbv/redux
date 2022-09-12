@@ -1,36 +1,69 @@
-function createStore () {
+
+// reducer function
+function todos(state = [], action) {
+ if (action.type === 'ADD_TODO'){
+  return state.concat([action.todo])
+ }
+ return state
+}
+
+function createStore (reducer) {
  // The store should have four parts
  // 1. The state
  // 2. Get the state
  // 3. Listen to changes on the state
  // 4. Update the state
+
  let state
- let listeners = [] // allows us to call subscribe many times an array of functions
+ let listeners = []
 
  const getState = () => state
 
- const subscribe = (listeners) => {
-  listeners.push(listeners)
-
-  // to unsubscribe by returning a brand-new function from subscribe
-  // which will remove our listeners function from our listeners array
+ const subscribe = (listener) => {
+  listeners.push(listener)
   return () => {
-   listeners = listeners.filter((l) => l !== listeners)
+   listeners = listeners.filter((l) => l !== listener)
   }
+ }
+
+ const dispatch = (action) => {
+  // call todos which wil get us our new state
+  state = reducer(state, action)
+
+  // loop over our listeners and invoke each one of them
+  listeners.forEach((listener) => listener())
  }
 
  return {
   getState,
-  subscribe
+  subscribe,
+  dispatch,
  }
 }
 
-// How to use the store
-// // to creates a store
-// const store = createStore()
-//
-// // to subscribes
-// store.subscribe( () => {})
-//
-// // to unsubscribe
-// const unsubscribe = store.subscribe(()=>{})
+// creating store
+const store = createStore(todos)
+
+// unsubscribe
+const unsubscribe = store.subscribe(()=>{
+ console.log('The new state is: ', store.getState())
+})
+
+// how it will look from the user perspective
+store.dispatch({
+ type: 'ADD_TODO',
+ todo: {
+  id: 0,
+  name: 'Learn Redux',
+  complete: false,
+ }
+})
+
+
+
+
+
+
+
+
+
