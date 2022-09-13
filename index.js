@@ -15,88 +15,122 @@ function todos(state = [], action) {
     }
 }
 
-function createStore (reducer) {
- // The store should have four parts
- // 1. The state
- // 2. Get the state
- // 3. Listen to changes on the state
- // 4. Update the state
+function goals(state = [], action) {
+    switch (action.type) {
+        case 'ADD_GOAL':
+            return state.concat([action.goal])
+        case 'REMOVE_GOAL':
+            return state.filter((goal) => goal.id !== action.id)
+        default:
+            return state
+    }
+}
 
- let state
- let listeners = []
+function app(state = {}, action) {
+    return {
+        todos: todos(state.todos, action),
+        goals: todos(state.goals, action)
+    }
+}
 
- const getState = () => state
+// store
+function createStore(reducer) {
+    // The store should have four parts
+    // 1. The state
+    // 2. Get the state
+    // 3. Listen to changes on the state
+    // 4. Update the state
 
- const subscribe = (listener) => {
-  listeners.push(listener)
-  return () => {
-   listeners = listeners.filter((l) => l !== listener)
-  }
- }
+    let state
+    let listeners = []
 
- const dispatch = (action) => {
-  // call todos which wil get us our new state
-  state = reducer(state, action)
+    const getState = () => state
 
-  // loop over our listeners and invoke each one of them
-  listeners.forEach((listener) => listener())
- }
+    const subscribe = (listener) => {
+        listeners.push(listener)
+        return () => {
+            listeners = listeners.filter((l) => l !== listener)
+        }
+    }
 
- return {
-  getState,
-  subscribe,
-  dispatch,
- }
+    const dispatch = (action) => {
+        if (action) { console.log('The action: ', action.type) }
+        // call todos which wil get us our new state
+        state = reducer(state, action)
+
+        // loop over our listeners and invoke each one of them
+        listeners.forEach((listener) => listener())
+    }
+
+    return {
+        getState,
+        subscribe,
+        dispatch,
+    }
 }
 
 // creating store
-const store = createStore(todos)
+const store = createStore(app)
 
-// subscribe
-store.subscribe(()=>{
- console.log('The new state is: ', store.getState())
+store.subscribe(() => {
+    console.log('The new state is: ', store.getState())
 })
 
-// actions
-const addTodoAction = {
+store.dispatch({
     type: 'ADD_TODO',
     todo: {
         id: 0,
-        name: 'Learn Redux',
-        complete: false
+        name: 'Walk the dog',
+        complete: false,
     }
-}
+})
 
-const addVueTodoAction = {
+store.dispatch({
     type: 'ADD_TODO',
     todo: {
-        id: 0,
-        name: 'Learn vue',
-        complete: false
+        id: 1,
+        name: 'Wash the car',
+        complete: false,
     }
-}
+})
 
-const addKitSurfTodoAction = {
+store.dispatch({
     type: 'ADD_TODO',
     todo: {
-        id: 0,
-        name: 'Learn kite surf',
-        complete: false
+        id: 2,
+        name: 'Go to the gym',
+        complete: true,
     }
-}
+})
 
-const removeTodoAction = {
+store.dispatch({
     type: 'REMOVE_TODO',
-    id: 0
-}
+    id: 1
+})
 
-const toggleTodoAction ={
+store.dispatch({
     type: 'TOGGLE_TODO',
     id: 0
-}
+})
 
-// how it will look from the user perspective
-store.dispatch(addTodoAction)
-store.dispatch(toggleTodoAction)
-store.dispatch(removeTodoAction)
+store.dispatch({
+    type: 'ADD_GOAL',
+    goal: {
+        id: 0,
+        name: 'Learn Redux'
+    }
+})
+
+store.dispatch({
+    type: 'ADD_GOAL',
+    goal: {
+        id: 1,
+        name: 'Lose 20 pounds'
+    }
+})
+
+store.dispatch({
+    type: 'REMOVE_GOAL',
+    id: 0
+})
 
