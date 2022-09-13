@@ -1,10 +1,18 @@
 
 // reducer function
 function todos(state = [], action) {
- if (action.type === 'ADD_TODO'){
-  return state.concat([action.todo])
- }
- return state
+    switch (action.type) {
+        case 'ADD_TODO':
+            return state.concat([action.todo])
+        case 'REMOVE_TODO':
+            return state.filter((todo) => todo.id != action.id)
+        case 'TOGGLE_TODO':
+            return state.map((todo) => todo.id !== action.id ? todo :
+                Object.assign({}, todo, { complete: !todo.complete })
+            )
+        default:
+            return state
+    }
 }
 
 function createStore (reducer) {
@@ -44,26 +52,51 @@ function createStore (reducer) {
 // creating store
 const store = createStore(todos)
 
-// unsubscribe
-const unsubscribe = store.subscribe(()=>{
+// subscribe
+store.subscribe(()=>{
  console.log('The new state is: ', store.getState())
 })
 
+// actions
+const addTodoAction = {
+    type: 'ADD_TODO',
+    todo: {
+        id: 0,
+        name: 'Learn Redux',
+        complete: false
+    }
+}
+
+const addVueTodoAction = {
+    type: 'ADD_TODO',
+    todo: {
+        id: 0,
+        name: 'Learn vue',
+        complete: false
+    }
+}
+
+const addKitSurfTodoAction = {
+    type: 'ADD_TODO',
+    todo: {
+        id: 0,
+        name: 'Learn kite surf',
+        complete: false
+    }
+}
+
+const removeTodoAction = {
+    type: 'REMOVE_TODO',
+    id: 0
+}
+
+const toggleTodoAction ={
+    type: 'TOGGLE_TODO',
+    id: 0
+}
+
 // how it will look from the user perspective
-store.dispatch({
- type: 'ADD_TODO',
- todo: {
-  id: 0,
-  name: 'Learn Redux',
-  complete: false,
- }
-})
-
-
-
-
-
-
-
-
+store.dispatch(addTodoAction)
+store.dispatch(toggleTodoAction)
+store.dispatch(removeTodoAction)
 
