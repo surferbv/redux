@@ -8,7 +8,7 @@
     <h1>Todo List</h1>
     <input id='todo-input' type='text' placeholder='Add Todo' />
     <button id='todoBtn'>Add Todo</button>
-    <ul id='todo-list'>
+    <ul id='todos-list'>
 
     </ul>
 </div>
@@ -16,7 +16,7 @@
     <h1>Goals List</h1>
     <input id='goal-input' type='text' placeholder='Add Goal' />
     <button id='goalBtn'>Add Goal</button>
-    <ul id='goal-list'>
+    <ul id='goals-list'>
 
     </ul>
 </div>
@@ -144,6 +144,13 @@
 
         store.subscribe(() => {
             console.log('The new state is: ', store.getState())
+            const {todos, goals} = store.getState()
+
+            document.getElementById('todos-list').innerHTML = '' 
+            document.getElementById('goals-list').innerHTML = ''
+
+            todos.forEach(addTodoToDom)
+            goals.forEach(addGoalToDom)
         })
 
         // store.dispatch(addGoalAction({
@@ -197,6 +204,29 @@
                 name,
                 complete: false,
             }))
+        }
+
+        function addTodoToDom (todo) {
+            const node = document.createElement('li')
+            const text = document.createTextNode(todo.name)
+            node.appendChild(text)
+
+            node.style.textDecoration = todo.complete ? 'line-through' : 'none'
+            node.addEventListener('click', () => {
+                store.dispatch(toggleTodoAction(todo.id))
+            })
+
+            document.getElementById('todos-list')
+                .appendChild(node)
+        }
+
+        function addGoalToDom (goal) {
+            const node = document.createElement('li')
+            const text = document.createTextNode(goal.name)
+            node.appendChild(text)
+
+            document.getElementById('goals-list')
+                .appendChild(node)
         }
 
         document.getElementById('todoBtn')
