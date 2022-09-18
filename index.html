@@ -6,17 +6,27 @@
 </head>
 <div>
     <h1>Todo List</h1>
-    <input id='todo' type='text' placeholder='Add Todo' />
+    <input id='todo-input' type='text' placeholder='Add Todo' />
     <button id='todoBtn'>Add Todo</button>
+    <ul id='todo-list'>
+
+    </ul>
 </div>
 <div>
     <h1>Goals List</h1>
-    <input id='goal' type='text' placeholder='Add Goal' />
+    <input id='goal-input' type='text' placeholder='Add Goal' />
     <button id='goalBtn'>Add Goal</button>
+    <ul id='goal-list'>
+
+    </ul>
 </div>
 
 <body>
     <script>
+        function generateId () {
+            return Math.random().toString(30).substring(2) + (new Date()).getTime().toString(36)
+        }
+        
         // libary code
         const ADD_TODO = 'ADD_TODO'
         const REMOVE_TODO = 'REMOVE_TODO'
@@ -136,39 +146,64 @@
             console.log('The new state is: ', store.getState())
         })
 
-        store.dispatch(addTodoAction({
-            id: 0,
-            name: 'Walk the dog',
-            complete: false,
-        }))
+        // store.dispatch(addGoalAction({
+        //     id: 0,
+        //     name: 'Lose 20 lbs',
+        //     complete: false,
+        // }))
 
-        store.dispatch(addGoalAction({
-            id: 0,
-            name: 'Lose 20 lbs',
-            complete: false,
-        }))
+        // store.dispatch(addTodoAction({
+        //     id: 1,
+        //     name: 'Go to the gym',
+        //     complete: true,
+        // }))
 
-        store.dispatch(addTodoAction({
-            id: 1,
-            name: 'Go to the gym',
-            complete: true,
-        }))
+        // store.dispatch(toggleTodoAction(0))
 
-        store.dispatch(toggleTodoAction(0))
+        // store.dispatch(removeTodoAction(0))
 
-        store.dispatch(removeTodoAction(0))
+        // store.dispatch(addTodoAction({
+        //     id: 2,
+        //     name: 'Learn Redux'
+        // }))
 
-        store.dispatch(addTodoAction({
-            id: 2,
-            name: 'Learn Redux'
-        }))
+        // store.dispatch(addGoalAction({
+        //     id: 1,
+        //     name: 'Run a marathon'
+        // }))
 
-        store.dispatch(addGoalAction({
-            id: 1,
-            name: 'Run a marathon'
-        }))
+        // store.dispatch(removeGoalAction(0))
 
-        store.dispatch(removeGoalAction(0))
+        // dom code
+        function addTodo() {
+            const input = document.getElementById('todo-input')
+            const name = input.value
+            input.value = ''
+
+            store.dispatch(addTodoAction({
+                id: generateId(),
+                name,
+                complete: false,
+            }))
+        }
+
+        function addGoal() {
+            const input = document.getElementById('goal-input')
+            const name = input.value
+            input.value = ''
+
+            store.dispatch(addGoalAction({
+                id: generateId(),
+                name,
+                complete: false,
+            }))
+        }
+
+        document.getElementById('todoBtn')
+            .addEventListener('click', addTodo)
+        
+        document.getElementById('goalBtn')
+            .addEventListener('click', addGoal)
     </script>
 </body>
 
