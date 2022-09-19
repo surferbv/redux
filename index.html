@@ -3,6 +3,7 @@
 
 <head>
     <title>Todos/Goals</title>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/redux/4.0.5/redux.min.js'></script>
 </head>
 <div>
     <h1>Todo List</h1>
@@ -97,50 +98,11 @@
             }
         }
 
-        function app(state = {}, action) {
-            return {
-                todos: todos(state.todos, action),
-                goals: goals(state.goals, action)
-            }
-        }
-
-        // store
-        function createStore(reducer) {
-            // The store should have four parts
-            // 1. The state 
-            // 2. Get the state (getState)
-            // 3. Listen to changes on the state (subscribe)
-            // 4. Update the state (dispatch)
-
-            let state
-            let listeners = []
-
-            const getState = () => state
-
-            const subscribe = (listener) => {
-                listeners.push(listener)
-                return () => {
-                    listeners = listeners.filter((l) => l !== listener)
-                }
-            }
-
-            const dispatch = (action) => {
-                // call todos which wil get us our new state
-                state = reducer(state, action)
-
-                // loop over our listeners and invoke each one of them
-                listeners.forEach((listener) => listener())
-            }
-
-            return {
-                getState,
-                subscribe,
-                dispatch,
-            }
-        }
-
         // app code
-        const store = createStore(app)
+        const store = Redux.createStore(Redux.combineReducers({
+            todos,
+            goals,
+        }))
 
         store.subscribe(() => {
             console.log('The new state is: ', store.getState())
