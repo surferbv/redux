@@ -182,6 +182,14 @@
         // store.dispatch(removeGoalAction(0))
 
         // dom code
+
+        function createRemoveButton (onClick) {
+            const removeBtn = document.createElement('button')
+            removeBtn.innerHTML = 'Remove'
+            removeBtn.addEventListener('click', onClick)
+            return removeBtn
+        }
+
         function addTodo() {
             const input = document.getElementById('todo-input')
             const name = input.value
@@ -209,12 +217,20 @@
         function addTodoToDom (todo) {
             const node = document.createElement('li')
             const text = document.createTextNode(todo.name)
+            const removeBtn = createRemoveButton( () => {
+                store.dispatch(removeTodoAction(todo.id))
+            })
+            removeBtn.style.margin = '4px'
             node.appendChild(text)
+            node.appendChild(removeBtn)
+            
 
             node.style.textDecoration = todo.complete ? 'line-through' : 'none'
+            
             node.addEventListener('click', () => {
                 store.dispatch(toggleTodoAction(todo.id))
             })
+
 
             document.getElementById('todos-list')
                 .appendChild(node)
@@ -223,7 +239,12 @@
         function addGoalToDom (goal) {
             const node = document.createElement('li')
             const text = document.createTextNode(goal.name)
+            const removeBtn = createRemoveButton( () => {
+                store.dispatch(removeGoalAction(goal.id))
+            })
+            removeBtn.style.margin = '4px'
             node.appendChild(text)
+            node.appendChild(removeBtn)
 
             document.getElementById('goals-list')
                 .appendChild(node)
