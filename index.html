@@ -4,6 +4,9 @@
 <head>
     <title>Todos/Goals</title>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/redux/4.0.5/redux.min.js'></script>
+    <script src='https://unpkg.com/react@16.13.1/umd/react.development.js'></script>
+    <script src='https://unpkg.com/react-dom@16.13.1/umd/react-dom.development.js'></script>
+    <script src='https://unpkg.com/babel-standalone@6.26.0/babel.min.js'></script>
 </head>
 <div>
     <h1>Todo List</h1>
@@ -13,6 +16,7 @@
 
     </ul>
 </div>
+
 <div>
     <h1>Goals List</h1>
     <input id='goal-input' type='text' placeholder='Add Goal' />
@@ -22,7 +26,13 @@
     </ul>
 </div>
 
+<hr/>
+
+<div id='app'></div>
+
 <body>
+
+    <!-- Vanilla JavaScript -->
     <script>
         function generateId() {
             return Math.random().toString(30).substring(2) + (new Date()).getTime().toString(36)
@@ -210,6 +220,58 @@
         document.getElementById('goalBtn')
             .addEventListener('click', addGoal)
     </script>
+
+    <!-- React -->
+    <script type='text/babel'>
+        function List(props) {
+            return (
+                <ul>
+                    <li>
+                        List
+                    </li>
+                </ul>
+            )
+        }
+
+        class Todos extends React.Component {
+            render() {
+                return(
+                    <div>
+                        <h1>Todos List</h1>
+                        <List/>
+                    </div>
+                )
+            }
+        }
+
+        class Goals extends React.Component {
+            render() {
+                return(
+                    <div>
+                        <h1>Goals List</h1>
+                        <List/>
+                    </div>
+                )
+            }
+        }
+
+        class App extends React.Component {
+            render() {
+                return(
+                    <div>
+                        <Todos/>
+                        <Goals/>
+                    </div>
+                )
+            }
+        }
+        
+        ReactDOM.render(
+            <App/>,
+            document.getElementById('app')
+        )
+    </script>
+
 </body>
 
 </html>
