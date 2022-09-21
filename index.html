@@ -71,7 +71,6 @@
             }
         }
     
-
         const checker = (store) => (next) => (action) => {
             if (action.type === ADD_TODO && action.todo.name.toLowerCase().indexOf('bitcoin') !== -1) {
                 return alert('Nope that is a a bad idea!')
@@ -82,6 +81,15 @@
             }
 
             return next(action)
+        }
+
+        const logger = (store) => (next) => (action) => {
+            console.group(action.type)
+            console.log('The action: ', action)
+            const result = next(action) // what is next? Why not place this near the end. If you do the new state does not show the updated state.
+            console.log('The new state: ', store.getState())
+            console.groupEnd()
+            return result // why do we return result?
         }
 
         // reducer function
@@ -115,10 +123,9 @@
         const store = Redux.createStore(Redux.combineReducers({
             todos,
             goals,
-        }), Redux.applyMiddleware(checker))
+        }), Redux.applyMiddleware(checker, logger))
 
         store.subscribe(() => {
-            console.log('The new state is: ', store.getState())
             const { todos, goals } = store.getState()
 
             document.getElementById('todos-list').innerHTML = ''
