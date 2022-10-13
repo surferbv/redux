@@ -7,6 +7,7 @@
     <script src='https://unpkg.com/react@16.13.1/umd/react.development.js'></script>
     <script src='https://unpkg.com/react-dom@16.13.1/umd/react-dom.development.js'></script>
     <script src='https://unpkg.com/babel-standalone@6.26.0/babel.min.js'></script>
+    <script src='https://ui.dev/goals-todos-api/index.js'></script>
 </head>
 
 <div id='app'></div>
@@ -25,6 +26,7 @@
         const TOGGLE_TODO = 'TOGGLE_TODO'
         const ADD_GOAL = 'ADD_GOAL'
         const REMOVE_GOAL = 'REMOVE_GOAL'
+        const RECEIVED_DATA = 'RECEIVED_DATA'
 
         // action creators
         function addTodoAction(todo) {
@@ -61,6 +63,14 @@
                 id,
             }
         }
+
+        function receiveDataAction(todos, goals){
+            return{
+                type: RECEIVED_DATA,
+                todos,
+                goals
+            }
+        }
     
         const checker = (store) => (next) => (action) => {
             if (action.type === ADD_TODO && action.todo.name.toLowerCase().indexOf('bitcoin') !== -1) {
@@ -94,6 +104,8 @@
                     return state.map((todo) => todo.id !== action.id ? todo :
                         Object.assign({}, todo, { complete: !todo.complete })
                     )
+                case RECEIVED_DATA:
+                    return action.todos
                 default:
                     return state
             }
@@ -105,6 +117,8 @@
                     return state.concat([action.goal])
                 case REMOVE_GOAL:
                     return state.filter((goal) => goal.id !== action.id)
+                case RECEIVED_DATA:
+                    return action.goals
                 default:
                     return state
             }
@@ -214,7 +228,15 @@
         class App extends React.Component {
             componentDidMount() {
                 const { store } = this.props
-                store.subscribe(() => this.forceUpdate()) // anti-pattern but for this use case it works just to relfect changes to store
+
+                Promise.all([
+                    API.fetchTodos(),
+                    API.fetchGoals(),
+                ]).then(([ todos, goals ]) => {
+                    store.dispatch(receiveDataAction(todos,goals))
+                })
+
+                store.subscribe(() => this.forceUpdate())
             }
 
             render() {
